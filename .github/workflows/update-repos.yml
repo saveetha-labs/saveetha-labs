@@ -1,0 +1,47 @@
+name: Update Saveetha Labs Repos
+
+on:
+  workflow_dispatch:        # manual button
+  schedule:
+    - cron: "0 3 * * 0"     # weekly (Sunday 03:00 UTC)
+
+jobs:
+  update-repos:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Fetch org repos from GitHub API
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p data
+          curl -s \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/orgs/saveetha-labs/repos?per_page=100&type=public" \
+            | jq '[.[] | {
+                name: .name,
+                description: .description,
+                html_url: .html_url,
+                stars: .stargazers_count,
+                forks: .forks_count,
+                updated_at: .updated_at,
+                created_at: .created_at,
+                homepage: .homepage,
+                language: .language
+              }]' > data/repos.json
+
+      - name: Commit changes if any
+        run: |
+          if git diff --quiet; then
+            echo "No repo changes detected"
+          else
+            git config user.name "saveetha-labs-bot"
+            git config user.email "bot@saveetha-labs.github.io"
+            git add data/repos.json
+            git commit -m "chore: update repo list"
+            git push
+          fi
