@@ -184,7 +184,7 @@ If you find our resources helpful, consider supporting us:
 ⭐ **Star our repositories**  
 🔄 **Share with your friends**  
 🤝 **Contribute to our projects**  
-☕ **[Buy us a coffee](https://www.buymeacoffee.com/saveethalabs)**
+☕ **[Buy us a coffee](https://www.buymeacoffee.com/comrademohan)**
 
 </div>
 
